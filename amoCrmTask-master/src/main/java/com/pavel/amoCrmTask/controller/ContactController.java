@@ -1,0 +1,29 @@
+package com.pavel.amoCrmTask.controller;
+
+import com.pavel.amoCrmTask.dto.request.ContactRequest;
+import com.pavel.amoCrmTask.service.ContactService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/contact")
+public class ContactController {
+
+    private final ContactService contactService;
+
+    @PostMapping("/add")
+    public ResponseEntity<?> add(@Valid @RequestBody ContactRequest req) {
+        try {
+            return ResponseEntity.ok(contactService.addContact(req));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error");
+        }
+    }
+
+}

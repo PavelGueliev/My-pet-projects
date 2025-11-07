@@ -1,0 +1,57 @@
+package com.pavel.autostock.domain.entity;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Entity
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "клиент", schema = "autostock")
+public class ClientEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Код_Клиента")
+    private Integer id;
+
+    @Column(name = "ФИО_клиента", nullable = false, length = 256)
+    private String fullName;
+
+    @Column(name = "Номер_Телефона", nullable = false, unique = true, length = 12)
+    private String phoneNumber;
+
+    @Column(name = "Дата_Рождения", nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate dateOfBirth;
+
+    @JsonManagedReference
+    @JsonIgnore
+    @OneToMany(mappedBy = "client")
+    private List<SellEntity> sells; // Связь с продажами
+
+    @JsonManagedReference
+    @JsonIgnore
+    @OneToMany(mappedBy = "client")
+    private List<TestDriveEntity> testDrives; // Связь с тест-драйвом
+
+    @JsonManagedReference
+    @JsonIgnore
+    @OneToMany(mappedBy = "client")
+    private List<PreOrderEntity> preOrders; // Связь с предзаказами
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "Id_Пользователя")
+    @JsonBackReference
+    private UserEntity user; // Связь с пользователем
+}
